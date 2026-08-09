@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tourneo</title>
+<meta name="theme-color" content="#0F0D12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tourneo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.webmanifest">
+<style>
+/* @@STYLES@@ */
+</style>
+</head>
+<body>
+
+<div id="bandeau-stockage" class="bandeau" hidden></div>
+
+<header class="appbar">
+  <div class="marque">
+    <span class="sigle">Tourneo</span>
+    <h1 id="titre-appli">Tournoi maison</h1>
+  </div>
+  <span class="cadence" id="cadence"></span>
+  <span class="pousse rangee" style="gap:6px">
+    <button class="btn mini" id="btn-annuler" hidden>&#8630; Annuler</button>
+    <button class="btn mini" id="btn-tv">Affichage TV</button>
+    <button class="btn mini" id="btn-fenetre" title="Ouvrir le classement dans une seconde fenêtre">Fenêtre &#8599;</button>
+  </span>
+</header>
+
+<main>
+  <section class="vue" id="vue-tournoi"></section>
+  <section class="vue" id="vue-classement"></section>
+  <section class="vue" id="vue-deroulement"></section>
+  <section class="vue" id="vue-joueurs"></section>
+  <section class="vue" id="vue-reglages"></section>
+</main>
+
+<nav class="onglets" id="onglets"></nav>
+
+<div id="tv">
+  <div class="tv-tete">
+    <div><h2 id="tv-titre">Classement</h2><span class="etiq" id="tv-sous"></span></div>
+    <div class="tv-cmd">
+      <button class="btn" id="tv-prec" aria-label="Panneau précédent">&#8249;</button>
+      <button class="btn" id="tv-pause" aria-label="Mettre en pause">&#10074;&#10074;</button>
+      <button class="btn" id="tv-suiv" aria-label="Panneau suivant">&#8250;</button>
+      <button class="btn" id="tv-fermer">Fermer</button>
+    </div>
+  </div>
+  <div class="tv-barre"><div id="tv-progres"></div></div>
+  <div id="tv-corps"></div>
+  <div class="tv-points" id="tv-points"></div>
+</div>
+
+<div id="recap">
+  <img id="recap-img" alt="Récapitulatif de la soirée">
+  <div class="actions">
+    <button class="btn primaire" id="recap-tel">Télécharger l'image</button>
+    <button class="btn" id="recap-fermer">Fermer</button>
+  </div>
+  <div class="petit sourdine" style="text-align:center;max-width:420px">
+    Sur téléphone, un appui long sur l'image permet de l'enregistrer ou de la partager directement.
+  </div>
+</div>
+
+<script>
+/* @@SCRIPT@@ */
+</script>
+</body>
+</html>

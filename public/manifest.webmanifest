@@ -1,0 +1,20 @@
+{
+  "name": "Tourneo",
+  "short_name": "Tourneo",
+  "description": "Pointage multidisciplinaire avec affiliation entre joueurs.",
+  "lang": "fr-CA",
+  "start_url": "./tourneo.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0F0D12",
+  "theme_color": "#0F0D12",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='104' fill='%230F0D12'/%3E%3Ccircle cx='256' cy='188' r='72' fill='none' stroke='%23F5903C' stroke-width='24'/%3E%3Ccircle cx='166' cy='340' r='52' fill='none' stroke='%2384B4EA' stroke-width='22'/%3E%3Ccircle cx='346' cy='340' r='52' fill='none' stroke='%2384B4EA' stroke-width='22'/%3E%3Cpath d='M214 246 L192 292 M298 246 L320 292' stroke='%23332C3C' stroke-width='18' stroke-linecap='round'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
