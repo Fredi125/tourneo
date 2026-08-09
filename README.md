@@ -37,6 +37,7 @@ src/index.html      squelette, avec marqueurs d'injection
 src/styles.css      un seul bloc de jetons de couleur en tête
 src/js/*.js         concaténés dans l'ordre alphabétique
 assets/photos/      24 photos libres de droit, une par jeu préréglé
+assets/photos/perso/  vos visuels à vous, ignorés par git
 assets/apercus/     27 aperçus composés, embarqués au build
 outils/build.py     assemble le fichier unique
 outils/generer-apercus.py   régénère les aperçus
@@ -58,3 +59,6 @@ ou domaine public, sujets génériques, provenance dans
 dessins originaux. Aucun visuel de jeu sous licence n'est utilisé — ni
 jaquette, ni logo, ni personnage — et il ne faut pas en ajouter. Voir
 `CLAUDE.md`, invariant n°2.
+
+Pour vos propres visuels, y compris ceux que le dépôt ne peut pas porter :
+`assets/photos/perso/`, ignoré par git. Voir son `LISEZMOI.md`.

@@ -22,7 +22,13 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 SRC = RACINE / "src" / "js" / "09-donnees.js"
 SORTIE = RACINE / "assets" / "apercus"
 PHOTOS = RACINE / "assets" / "photos"
+PERSO = PHOTOS / "perso"
 COTE = 256
+
+# Les visuels personnels sont posés tels quels : c'est déjà l'image que Fred
+# a choisie, la retravailler n'aurait pas de sens. Ils passent avant tout le
+# reste et ne sont jamais versionnés — voir assets/photos/perso/LISEZMOI.md.
+FORMATS_PERSO = (".jpg", ".jpeg", ".png", ".webp")
 
 # La charte est sombre : toute photo est ramenée à cette luminance moyenne
 # avant d'être teintée, sinon une vignette claire crève l'écran à côté des
@@ -74,6 +80,34 @@ def melange(a, b, t):
     return "#%02X%02X%02X" % tuple(round(x + (y - x) * t) for x, y in zip(a, b))
 
 
+def carre(im):
+    """Recadre au centre, en carré, à la taille de travail."""
+    c = min(im.width, im.height)
+    return im.crop(((im.width - c) // 2, (im.height - c) // 2,
+                    (im.width - c) // 2 + c, (im.height - c) // 2 + c)).resize((320, 320), Image.LANCZOS)
+
+
+def photo_perso(cle):
+    """Visuel personnel, s'il y en a un. Local à la machine de Fred.
+
+    L'image est montrée en entier : une jaquette est plus haute que large,
+    la recadrer en carré lui couperait le titre. Le vide est comblé par une
+    copie floue et assombrie de l'image elle-même.
+    """
+    for ext in FORMATS_PERSO:
+        f = PERSO / (cle + ext)
+        if not f.exists():
+            continue
+        im = Image.open(f).convert("RGB")
+        fond = Image.blend(carre(im).filter(ImageFilter.GaussianBlur(14)),
+                           Image.new("RGB", (320, 320), BG), 0.45)
+        r = min(320 / im.width, 320 / im.height)
+        avant = im.resize((max(1, round(im.width * r)), max(1, round(im.height * r))), Image.LANCZOS)
+        fond.paste(avant, ((320 - avant.width) // 2, (320 - avant.height) // 2))
+        return fond
+    return None
+
+
 def photo_teintee(cle, teinte):
     """Photo libre de droit → bichromie sombre aux couleurs de la famille.
 
@@ -84,11 +118,7 @@ def photo_teintee(cle, teinte):
     f = PHOTOS / (cle + ".jpg")
     if not f.exists():
         return None
-    im = Image.open(f).convert("RGB")
-    c = min(im.width, im.height)
-    im = im.crop(((im.width - c) // 2, (im.height - c) // 2,
-                  (im.width - c) // 2 + c, (im.height - c) // 2 + c))
-    gris = ImageOps.autocontrast(ImageOps.grayscale(im.resize((320, 320), Image.LANCZOS)), cutoff=1)
+    gris = ImageOps.autocontrast(ImageOps.grayscale(carre(Image.open(f).convert("RGB"))), cutoff=1)
 
     # Même luminance moyenne pour toutes : une photo de neige et une photo
     # de nuit doivent peser pareil dans la grille. La courbe en S recreuse
@@ -162,9 +192,18 @@ def svg_apercu(cle, tracé):
     teinte, genre = FAMILLES.get(cle, ("#F5903C", "grille"))
     haut = melange(BG, teinte, 0.17)
     motif = melange(FG, teinte, 0.30)
-    photo = photo_teintee(cle, teinte)
+    perso = photo_perso(cle)
+    photo = None if perso is not None else photo_teintee(cle, teinte)
 
-    if photo is None:
+    if perso is not None:
+        # Aucune bichromie, aucun pictogramme : l'image choisie parle d'
+        # elle-même. Juste de quoi garder le nom du jeu lisible par-dessus,
+        # et le liseré de la famille en bas.
+        fond = (f'<image x="0" y="0" width="320" height="320" xlink:href="{en_donnees(perso)}"/>\n'
+                f'<rect width="320" height="320" fill="url(#lisibilite)"/>')
+        couronne = ""
+        pose, ampleur, ombre, tracé = 95, 5.4, "", ""
+    elif photo is None:
         fond = (f'<rect width="320" height="320" fill="url(#fond)"/>\n'
                 f'<rect width="320" height="320" fill="url(#lueur)"/>\n'
                 f'{decor(genre, teinte, sum(map(ord, cle)))}')
@@ -224,6 +263,11 @@ def svg_apercu(cle, tracé):
     <stop offset="0.55" stop-color="{teinte}" stop-opacity="0.09"/>
     <stop offset="1.00" stop-color="{teinte}" stop-opacity="0.02"/>
   </radialGradient>
+  <linearGradient id="lisibilite" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0.00" stop-color="{BG}" stop-opacity="0"/>
+    <stop offset="0.55" stop-color="{BG}" stop-opacity="0"/>
+    <stop offset="1.00" stop-color="{BG}" stop-opacity="0.55"/>
+  </linearGradient>
   <radialGradient id="bordure" cx="0.5" cy="0.46" r="0.82">
     <stop offset="0.55" stop-color="{BG}" stop-opacity="0"/>
     <stop offset="0.80" stop-color="{BG}" stop-opacity="0.16"/>
@@ -270,10 +314,12 @@ if __name__ == "__main__":
         raise SystemExit("Tracés introuvables : " + ", ".join(manquants))
 
     SORTIE.mkdir(parents=True, exist_ok=True)
-    total, avec_photo = 0, 0
+    total, avec_photo, perso = 0, 0, 0
     for cle in sorted(FAMILLES):
-        photo = (PHOTOS / (cle + ".jpg")).exists()
-        avec_photo += photo
+        maison = photo_perso(cle) is not None
+        photo = maison or (PHOTOS / (cle + ".jpg")).exists()
+        avec_photo += photo and not maison
+        perso += maison
         ext, data = encoder(svg_apercu(cle, icones[cle]), photo)
         (SORTIE / (cle + ext)).write_bytes(data)
         # Une clé n'a qu'un aperçu : si elle passe du dessin à la photo, la
@@ -282,7 +328,9 @@ if __name__ == "__main__":
         if autre.exists():
             autre.unlink()
         total += len(data)
-        print(f"  {cle:<10} {len(data)/1024:6.1f} ko  {'photo' if photo else 'dessin'}")
+        print(f"  {cle:<10} {len(data)/1024:6.1f} ko  "
+              f"{'perso' if maison else 'photo' if photo else 'dessin'}")
     print(f"\n{len(FAMILLES)} aperçus dans assets/apercus/ · {total/1024:.0f} ko "
-          f"· {avec_photo} sur photo libre de droit")
+          f"· {avec_photo} sur photo libre de droit"
+          + (f" · {perso} sur visuel personnel, à ne pas verser dans git" if perso else ""))
     print("Lancez outils/build.py pour les embarquer dans dist/tourneo.html")

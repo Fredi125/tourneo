@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 .DS_Store
 node_modules/
+
+# Visuels personnels : ils restent sur la machine de Fred, jamais dans git.
+# Le mode d'emploi, lui, est versionné.
+assets/photos/perso/*
+!assets/photos/perso/LISEZMOI.md

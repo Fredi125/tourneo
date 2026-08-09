@@ -61,6 +61,15 @@ JPEG carré dans `assets/photos/` et relancer le script. Si Fred veut ses
 propres visuels pour une soirée, le champ `image` de chaque jeu existe
 aussi, sans passer par le build.
 
+**Cet invariant protège le dépôt, pas la machine de Fred.** Le dépôt se
+partage, donc il ne porte rien qui ne soit pas libre. Le `tourneo.html`
+que Fred fabrique chez lui, personne ne le distribue : ce qu'il y met ne
+regarde que lui. `assets/photos/perso/` est là pour ça — ignoré par git,
+prioritaire sur la photo libre de droit, posé tel quel sans bichromie ni
+pictogramme. Mode d'emploi dans son `LISEZMOI.md`. Ne jamais verser le
+contenu de ce dossier dans git, ni le contourner en écrivant dans
+`assets/photos/`.
+
 **INVARIANT — Les affiliations se déclarent avant la partie.** Le cycle
 d'un jeu est `a_venir → declarations → en_jeu → terminee`. Les
 affiliations et les paris ne sont modifiables qu'en `declarations`. Une
