@@ -23,11 +23,11 @@ le reste.
 
 ```bash
 python3 outils/build.py     # src/ → dist/tourneo.html
-node tests/moteur.mjs       # 72 vérifications de régression
+node tests/moteur.mjs       # 73 vérifications de régression
 ```
 
-Python 3 et Node suffisent. `cairosvg` n'est nécessaire que pour
-régénérer les illustrations.
+Python 3 et Node suffisent. `cairosvg` et `Pillow` ne sont nécessaires
+que pour régénérer les aperçus.
 
 ## Structure
 
@@ -35,9 +35,10 @@ régénérer les illustrations.
 src/index.html      squelette, avec marqueurs d'injection
 src/styles.css      un seul bloc de jetons de couleur en tête
 src/js/*.js         concaténés dans l'ordre alphabétique
-assets/apercus/     27 illustrations PNG originales
+assets/photos/      24 photos libres de droit, une par jeu préréglé
+assets/apercus/     27 aperçus composés, embarqués au build
 outils/build.py     assemble le fichier unique
-outils/generer-apercus.py   régénère les illustrations
+outils/generer-apercus.py   régénère les aperçus
 tests/moteur.mjs    suite de régression
 dist/               produit, non versionné
 ```
@@ -50,6 +51,9 @@ dist/               produit, non versionné
 
 ## Licence et visuels
 
-Les illustrations de `assets/apercus/` sont originales. Aucun visuel de
-jeu sous licence n'est utilisé, et il ne faut pas en ajouter — voir
+Chaque jeu des préréglages a sa photo, toutes **libres de droit** : CC0
+ou domaine public, sujets génériques, provenance dans
+`assets/photos/SOURCES.md`. Les trois pictogrammes restants sont des
+dessins originaux. Aucun visuel de jeu sous licence n'est utilisé — ni
+jaquette, ni logo, ni personnage — et il ne faut pas en ajouter. Voir
 `CLAUDE.md`, invariant n°2.

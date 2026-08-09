@@ -28,7 +28,8 @@ Ce qui existe :
 | Récapitulatif PNG partageable | complet |
 | Affichage TV, 5 panneaux en rotation, fenêtre miroir | complet |
 | Chronomètre par jeu | complet, désactivé par défaut |
-| 24 préréglages, 27 illustrations PNG originales | complet |
+| 24 préréglages, chacun sa photo libre de droit | complet |
+| 3 pictogrammes restants en illustration originale | complet |
 | Charte visuelle inspirée de GameCrawler | complet, valeurs à confirmer |
 
 **Non fait, et assumé :** pas de serveur, pas de compte, pas
@@ -63,10 +64,10 @@ réécrivait le fichier entier, et les diffs étaient illisibles.
 Le dépôt sépare donc **sources** et **produit** :
 
 ```
-src/          ce qu'on édite    → versionné, diffable
-assets/       les 27 PNG        → versionné, binaire, stable
+src/          ce qu'on édite       → versionné, diffable
+assets/       photos et aperçus    → versionné, binaire, stable
 outils/       build et générateur
-dist/         le produit        → NON versionné, reconstruit
+dist/         le produit           → NON versionné, reconstruit
 ```
 
 Le build reconstitue exactement le fichier unique : mêmes 115
@@ -148,10 +149,13 @@ synchronise par l'événement `storage`, qui exige la même origine. En
 `file://` les navigateurs sont inégaux. En HTTPS depuis le VPS, ça marche.
 À tester en vrai avant de compter dessus le soir de la soirée.
 
-**Le poids du fichier.** 314 ko dont 126 ko d'images. Acceptable pour une
-application locale mise en cache une fois. Si ça devient gênant, le plan
-prévoit de passer les images en fichiers séparés — mais ça coûte
-l'autonomie du fichier unique, qui est un invariant du produit.
+**Le poids du fichier.** 391 ko dont 182 ko d'images, depuis que les
+24 jeux préréglés ont chacun leur photo libre de droit. Acceptable pour
+une application locale mise en cache une fois. Les photos sont déjà
+lissées, ramenées à 256 px et encodées en JPEG ; le prochain levier
+serait de descendre à 224 px (−40 ko environ) avant d'envisager des
+fichiers séparés — mais ça, ça coûte l'autonomie du fichier unique, qui
+est un invariant du produit.
 
 ---
 

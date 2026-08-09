@@ -1,21 +1,42 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fabrique une illustration PNG originale par famille de jeu.
+Fabrique un aperçu carré par famille de jeu.
 
-Aucun visuel sous licence n'est utilisé : chaque vignette est composée à
-partir des tracés déjà présents dans l'application, enrichis d'un fond
-dégradé, d'une couche décorative propre à la famille et d'une lueur.
-Le rendu suit les mêmes jetons de couleur que l'interface.
+Deux fonds possibles, une seule mise en page :
+
+  · une photo libre de droit (CC0 ou domaine public) quand
+    assets/photos/<clé>.jpg existe — voir SOURCES.md pour la provenance ;
+  · une couche décorative dessinée, sinon.
+
+Dans les deux cas le tracé du pictogramme est posé par-dessus et le rendu
+suit les jetons de couleur de l'interface. Aucun visuel de jeu sous licence
+n'est utilisé : ni jaquette, ni logo, ni personnage. Les photos montrent la
+famille de jeu — un kart, une cible, un échiquier — jamais une marque.
 """
 import re, io, base64, math, random, pathlib
 import cairosvg
-from PIL import Image
+from PIL import Image, ImageFilter, ImageOps, ImageStat
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 SRC = RACINE / "src" / "js" / "09-donnees.js"
 SORTIE = RACINE / "assets" / "apercus"
+PHOTOS = RACINE / "assets" / "photos"
 COTE = 256
+
+# La charte est sombre : toute photo est ramenée à cette luminance moyenne
+# avant d'être teintée, sinon une vignette claire crève l'écran à côté des
+# autres.
+LUMIERE_CIBLE = 100
+
+# Le grain d'une photo double le poids du fichier pour un détail que personne
+# ne verra dans une pastille de 54 px. On le lisse juste avant l'encodage.
+ADOUCI = 0.6
+
+# Les dessins restent en PNG : à plat, une palette de 64 teintes les rend au
+# bit près pour 4 ko. Les photos partent en JPEG, deux fois plus léger qu'un
+# PNG à qualité égale — et tout est embarqué dans le fichier unique.
+QUALITE_JPEG = 76
 
 # ── Jetons, alignés sur le bloc :root de l'application ──────────────────
 BG      = "#0F0D12"
@@ -51,6 +72,47 @@ def melange(a, b, t):
     a = [int(a[i:i+2], 16) for i in (1, 3, 5)]
     b = [int(b[i:i+2], 16) for i in (1, 3, 5)]
     return "#%02X%02X%02X" % tuple(round(x + (y - x) * t) for x, y in zip(a, b))
+
+
+def photo_teintee(cle, teinte):
+    """Photo libre de droit → bichromie sombre aux couleurs de la famille.
+
+    On passe par le gris avant de reteinter : deux photos venues de deux
+    ateliers différents ressortent alors avec la même température, et la
+    grille de tuiles reste une seule image plutôt qu'un album de vacances.
+    """
+    f = PHOTOS / (cle + ".jpg")
+    if not f.exists():
+        return None
+    im = Image.open(f).convert("RGB")
+    c = min(im.width, im.height)
+    im = im.crop(((im.width - c) // 2, (im.height - c) // 2,
+                  (im.width - c) // 2 + c, (im.height - c) // 2 + c))
+    gris = ImageOps.autocontrast(ImageOps.grayscale(im.resize((320, 320), Image.LANCZOS)), cutoff=1)
+
+    # Même luminance moyenne pour toutes : une photo de neige et une photo
+    # de nuit doivent peser pareil dans la grille. La courbe en S recreuse
+    # ensuite les noirs, que le nivellement avait remontés en gris de brume.
+    moyenne = max(6.0, min(249.0, ImageStat.Stat(gris).mean[0]))
+    gamma = math.log(LUMIERE_CIBLE / 255.0) / math.log(moyenne / 255.0)
+    table = []
+    for v in range(256):
+        x = (v / 255.0) ** gamma
+        x = 0.35 * x + 0.65 * (x * x * (3 - 2 * x))
+        table.append(round(3 + 219 * x))
+    gris = gris.point(table).filter(ImageFilter.GaussianBlur(ADOUCI))
+
+    return ImageOps.colorize(gris,
+                             black=melange(BG, teinte, 0.08),
+                             mid=melange(SURFACE, teinte, 0.30),
+                             white=melange(FG, teinte, 0.62))
+
+
+def en_donnees(im):
+    """PNG encodé pour être posé tel quel dans le SVG."""
+    tampon = io.BytesIO()
+    im.save(tampon, "PNG")
+    return "data:image/png;base64," + base64.b64encode(tampon.getvalue()).decode()
 
 
 def decor(genre, teinte, graine):
@@ -100,7 +162,29 @@ def svg_apercu(cle, tracé):
     teinte, genre = FAMILLES.get(cle, ("#F5903C", "grille"))
     haut = melange(BG, teinte, 0.17)
     motif = melange(FG, teinte, 0.30)
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{COTE}" height="{COTE}" viewBox="0 0 320 320">
+    photo = photo_teintee(cle, teinte)
+
+    if photo is None:
+        fond = (f'<rect width="320" height="320" fill="url(#fond)"/>\n'
+                f'<rect width="320" height="320" fill="url(#lueur)"/>\n'
+                f'{decor(genre, teinte, sum(map(ord, cle)))}')
+        couronne = '<rect width="320" height="320" fill="url(#vignette)"/>'
+        pose, ampleur, ombre = 78, 7, ""
+    else:
+        # Le voile reprend les trois paliers du dégradé dessiné : la photo
+        # s'assombrit vers le bas pour que le nom du jeu reste lisible
+        # par-dessus dans la tuile. La lueur et la vignette, elles, sont
+        # bien plus discrètes qu'en dessin : sinon elles noient la photo.
+        fond = (f'<image x="0" y="0" width="320" height="320" xlink:href="{en_donnees(photo)}"/>\n'
+                f'<rect width="320" height="320" fill="url(#voile)"/>\n'
+                f'<rect width="320" height="320" fill="url(#braise)"/>')
+        couronne = '<rect width="320" height="320" fill="url(#bordure)"/>'
+        pose, ampleur = 95, 5.4
+        ombre = (f'<g transform="translate({pose},{pose}) scale({ampleur})" fill="none" stroke="{BG}" '
+                 f'stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" color="{BG}" '
+                 f'filter="url(#halo)" opacity="0.85">{tracé}</g>\n')
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{COTE}" height="{COTE}" viewBox="0 0 320 320">
 <defs>
   <linearGradient id="fond" x1="0" y1="0" x2="0.32" y2="1">
     <stop offset="0.00" stop-color="{haut}"/>
@@ -109,6 +193,14 @@ def svg_apercu(cle, tracé):
     <stop offset="0.72" stop-color="{SURFACE}"/>
     <stop offset="0.73" stop-color="{BG}"/>
     <stop offset="1.00" stop-color="{BG}"/>
+  </linearGradient>
+  <linearGradient id="voile" x1="0" y1="0" x2="0.32" y2="1">
+    <stop offset="0.00" stop-color="{BG}" stop-opacity="0.06"/>
+    <stop offset="0.34" stop-color="{BG}" stop-opacity="0.06"/>
+    <stop offset="0.35" stop-color="{BG}" stop-opacity="0.26"/>
+    <stop offset="0.72" stop-color="{BG}" stop-opacity="0.26"/>
+    <stop offset="0.73" stop-color="{BG}" stop-opacity="0.52"/>
+    <stop offset="1.00" stop-color="{BG}" stop-opacity="0.72"/>
   </linearGradient>
   <radialGradient id="lueur" cx="0.5" cy="0.44" r="0.64">
     <stop offset="0.00" stop-color="{teinte}" stop-opacity="0.30"/>
@@ -127,36 +219,48 @@ def svg_apercu(cle, tracé):
     <stop offset="0.75" stop-color="{BG}" stop-opacity="0.52"/>
     <stop offset="1.00" stop-color="{BG}" stop-opacity="0.74"/>
   </radialGradient>
+  <radialGradient id="braise" cx="0.5" cy="0.42" r="0.72">
+    <stop offset="0.00" stop-color="{teinte}" stop-opacity="0.16"/>
+    <stop offset="0.55" stop-color="{teinte}" stop-opacity="0.09"/>
+    <stop offset="1.00" stop-color="{teinte}" stop-opacity="0.02"/>
+  </radialGradient>
+  <radialGradient id="bordure" cx="0.5" cy="0.46" r="0.82">
+    <stop offset="0.55" stop-color="{BG}" stop-opacity="0"/>
+    <stop offset="0.80" stop-color="{BG}" stop-opacity="0.16"/>
+    <stop offset="1.00" stop-color="{BG}" stop-opacity="0.46"/>
+  </radialGradient>
   <filter id="halo" x="-45%" y="-45%" width="190%" height="190%">
     <feGaussianBlur stdDeviation="11"/>
   </filter>
 </defs>
 
-<rect width="320" height="320" fill="url(#fond)"/>
-<rect width="320" height="320" fill="url(#lueur)"/>
-{decor(genre, teinte, sum(map(ord, cle)))}
-<rect width="320" height="320" fill="url(#vignette)"/>
+{fond}
+{couronne}
 
-<g transform="translate(78,78) scale(7)" fill="none" stroke="{teinte}" stroke-width="1.5"
+{ombre}<g transform="translate({pose},{pose}) scale({ampleur})" fill="none" stroke="{teinte}" stroke-width="1.5"
    stroke-linecap="round" stroke-linejoin="round" color="{teinte}"
    filter="url(#halo)" opacity="0.85">{tracé}</g>
 
-<g transform="translate(78,78) scale(7)" fill="none" stroke="{motif}" stroke-width="1.35"
+<g transform="translate({pose},{pose}) scale({ampleur})" fill="none" stroke="{motif}" stroke-width="1.35"
    stroke-linecap="round" stroke-linejoin="round" color="{motif}">{tracé}</g>
 
 <rect x="0" y="316" width="320" height="4" fill="{teinte}" opacity="0.5"/>
 </svg>'''
 
 
-def png_optimise(svg):
+def encoder(svg, photo):
+    """Rend le SVG puis l'encode au format le plus léger pour son contenu."""
     brut = cairosvg.svg2png(bytestring=svg.encode(), output_width=COTE, output_height=COTE)
     im = Image.open(io.BytesIO(brut)).convert("RGB")
+    out = io.BytesIO()
+    if photo:
+        im.save(out, "JPEG", quality=QUALITE_JPEG, optimize=True, progressive=True, subsampling=2)
+        return ".jpg", out.getvalue()
     # Octree sans tramage : le bruit de tramage triple le poids d'un PNG
     # pour un gain invisible dans une vignette de 54 px.
     im = im.quantize(colors=64, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE)
-    out = io.BytesIO()
     im.save(out, "PNG", optimize=True)
-    return out.getvalue()
+    return ".png", out.getvalue()
 
 
 if __name__ == "__main__":
@@ -166,11 +270,19 @@ if __name__ == "__main__":
         raise SystemExit("Tracés introuvables : " + ", ".join(manquants))
 
     SORTIE.mkdir(parents=True, exist_ok=True)
-    total = 0
+    total, avec_photo = 0, 0
     for cle in sorted(FAMILLES):
-        data = png_optimise(svg_apercu(cle, icones[cle]))
-        (SORTIE / f"{cle}.png").write_bytes(data)
+        photo = (PHOTOS / (cle + ".jpg")).exists()
+        avec_photo += photo
+        ext, data = encoder(svg_apercu(cle, icones[cle]), photo)
+        (SORTIE / (cle + ext)).write_bytes(data)
+        # Une clé n'a qu'un aperçu : si elle passe du dessin à la photo, la
+        # version précédente doit disparaître, sinon le build en voit deux.
+        autre = SORTIE / (cle + (".png" if ext == ".jpg" else ".jpg"))
+        if autre.exists():
+            autre.unlink()
         total += len(data)
-        print(f"  {cle:<10} {len(data)/1024:6.1f} ko")
-    print(f"\n{len(FAMILLES)} illustrations dans assets/apercus/ · {total/1024:.0f} ko")
+        print(f"  {cle:<10} {len(data)/1024:6.1f} ko  {'photo' if photo else 'dessin'}")
+    print(f"\n{len(FAMILLES)} aperçus dans assets/apercus/ · {total/1024:.0f} ko "
+          f"· {avec_photo} sur photo libre de droit")
     print("Lancez outils/build.py pour les embarquer dans dist/tourneo.html")

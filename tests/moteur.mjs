@@ -291,9 +291,18 @@ groupe("Illustrations");
   const orphelins = [];
   A.PRESETS.forEach((f) => f.jeux.forEach((g) => { if (!A.APERCUS[g.icone]) orphelins.push(g.nom); }));
   egal("aucun préréglage sans illustration", orphelins, []);
-  verifie("toutes en PNG", Object.values(A.APERCUS).every((v) => v.startsWith("data:image/png;base64,")));
+  verifie("toutes embarquées, aucune adresse externe",
+    Object.values(A.APERCUS).every((v) => /^data:image\/(png|jpeg);base64,/.test(v)));
+  // Les aperçus photo sortent en JPEG, les dessins en PNG : si une photo
+  // libre de droit disparaît d'assets/photos, le jeu retombe au dessin et
+  // cette vérification le voit.
+  const sansPhoto = [];
+  A.PRESETS.forEach((f) => f.jeux.forEach((g) => {
+    if (!/^data:image\/jpeg;base64,/.test(A.APERCUS[g.icone] || "")) sansPhoto.push(g.nom);
+  }));
+  egal("chaque jeu préréglé montre une photo", sansPhoto, []);
   const x = A.normaliserEpreuve({ id: "a", icone: "kart" });
-  verifie("le préréglage fournit son illustration", A.apercuDe(x).startsWith("data:image/png"));
+  verifie("le préréglage fournit son illustration", A.apercuDe(x).startsWith("data:image/"));
   x.image = "data:image/jpeg;base64,PERSO";
   egal("l'image personnalisée l'emporte", A.apercuDe(x), "data:image/jpeg;base64,PERSO");
   x.image = ""; x.icone = "inconnu";

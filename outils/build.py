@@ -18,19 +18,30 @@ APERCUS = RACINE / "assets" / "apercus"
 PUBLIC = RACINE / "public"
 
 
+TYPES = {".png": "image/png", ".jpg": "image/jpeg"}
+
+
 def banque_apercus():
-    """Encode les PNG en une seule déclaration JS."""
-    fichiers = sorted(APERCUS.glob("*.png"))
+    """Encode les aperçus en une seule déclaration JS."""
+    fichiers = sorted(f for f in APERCUS.iterdir() if f.suffix in TYPES)
     if not fichiers:
         sys.exit("Aucun aperçu dans assets/apercus — lancez outils/generer-apercus.py")
+    # Une clé, un aperçu : deux extensions pour la même clé écriraient deux
+    # fois la même propriété dans la banque, et la dernière gagnerait.
+    vus = set()
+    doubles = sorted({f.stem for f in fichiers if f.stem in vus or vus.add(f.stem)})
+    if doubles:
+        sys.exit("Deux aperçus pour la même clé : " + ", ".join(doubles))
     lignes = []
     for f in fichiers:
         b64 = base64.b64encode(f.read_bytes()).decode()
-        lignes.append(f'  {f.stem}:"data:image/png;base64,{b64}"')
+        lignes.append(f'  {f.stem}:"data:{TYPES[f.suffix]};base64,{b64}"')
     return ("/* ==========================================================================\n"
             "   APERÇUS — GÉNÉRÉ, NE PAS ÉDITER\n"
-            "   Source : assets/apercus/*.png, régénérables par outils/generer-apercus.py.\n"
-            "   Illustrations originales : aucun visuel de jeu sous licence.\n"
+            "   Source : assets/apercus/, régénérables par outils/generer-apercus.py.\n"
+            "   Dessins originaux et photos libres de droit (CC0 ou domaine public,\n"
+            "   provenance dans assets/photos/SOURCES.md) : aucun visuel de jeu\n"
+            "   sous licence.\n"
             "   ========================================================================== */\n"
             "var APERCUS = {\n" + ",\n".join(lignes) + "\n};")
 

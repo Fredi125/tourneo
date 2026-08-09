@@ -90,11 +90,11 @@ Détails dans `HANDOFF.md`, section « Ce qui est incertain ».
 
 **À faire.** Remplacer le bloc `:root` de `src/styles.css`. Si les noms
 diffèrent, renommer dans tout le dépôt — c'est mécanique, la couche de
-correspondance est déjà isolée. Régénérer les 27 illustrations, qui lisent
-les mêmes jetons. Ajuster `public/manifest.webmanifest`.
+correspondance est déjà isolée. Régénérer les 27 aperçus, qui lisent les
+mêmes jetons — la bichromie des photos en dépend autant que les dessins. Ajuster `public/manifest.webmanifest`.
 
 **Vérifier.** Le test `Charte visuelle` doit rester vert, et les
-illustrations rester lisibles à 54 px : contrôler à la taille réelle
+aperçus rester lisibles à 54 px : contrôler à la taille réelle
 d'affichage, pas seulement en grand.
 
 | Solo | Assisté |

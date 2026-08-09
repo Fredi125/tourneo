@@ -40,10 +40,23 @@ dépendance externe` garde cette porte.
 
 **INVARIANT — Aucun visuel sous licence.** Les jaquettes, logos et
 personnages de jeux (Nintendo, Blizzard, Bandai Namco, Valve…) sont
-protégés. Les illustrations de `assets/apercus/` sont **originales**,
-composées à partir des tracés de `ICONES`. Ne jamais télécharger ni
-intégrer d'art officiel, même « juste pour tester ». Si Fred veut ses
-propres visuels, le champ `image` de chaque jeu existe pour ça.
+protégés. Ne jamais télécharger ni intégrer d'art officiel, même « juste
+pour tester ». Les aperçus de `assets/apercus/` n'ont donc que deux
+sources permises :
+
+- une **photo libre de droit** — CC0 ou domaine public, jamais une licence
+  qui exige attribution ou interdit le commercial — rangée dans
+  `assets/photos/<clé>.jpg`, sa provenance consignée dans
+  `assets/photos/SOURCES.md`. Elle montre un **sujet générique** : un kart
+  pour Mario Kart, une cible pour les dards, un échiquier pour les échecs.
+  Jamais une capture, une boîte, un personnage ;
+- à défaut, une **illustration originale** composée des tracés de `ICONES`.
+
+`outils/generer-apercus.py` fabrique les deux, en bichromie aux couleurs de
+la famille, pictogramme par-dessus. Pour changer un visuel : remplacer le
+JPEG carré dans `assets/photos/` et relancer le script. Si Fred veut ses
+propres visuels pour une soirée, le champ `image` de chaque jeu existe
+aussi, sans passer par le build.
 
 **INVARIANT — Les affiliations se déclarent avant la partie.** Le cycle
 d'un jeu est `a_venir → declarations → en_jeu → terminee`. Les
@@ -199,15 +212,16 @@ verre dans l'autre. Toute nouvelle commande respecte ça.
 
 ```bash
 python3 outils/build.py          # sources → dist/tourneo.html
-node tests/moteur.mjs            # 72 vérifications, sortie non nulle si échec
-python3 outils/generer-apercus.py  # régénère les 27 PNG (nécessite cairosvg)
+node tests/moteur.mjs            # 73 vérifications, sortie non nulle si échec
+python3 outils/generer-apercus.py  # régénère les 27 aperçus (cairosvg + Pillow)
 ```
 
 **Boucle obligatoire : modifier `src/` → build → tests.** Ne jamais
 éditer `dist/tourneo.html` directement, il est écrasé au build.
 
 `src/js/08-apercus.js` n'existe pas dans le dépôt : la banque d'images
-est fabriquée au build à partir de `assets/apercus/*.png`. Ne pas la
+est fabriquée au build à partir de `assets/apercus/` — les photos en
+`.jpg`, les dessins en `.png`, une seule extension par clé. Ne pas la
 créer à la main.
 
 Servir en local :
@@ -236,4 +250,8 @@ n'a de toute façon pas besoin.
 - **La ligue cumule par nom**, seul identifiant stable entre deux
   soirées. Une faute de frappe crée un joueur fantôme. Documenté dans
   l'interface, à ne pas « corriger » par des identifiants.
-- Le fichier construit pèse ~314 ko dont 126 ko d'images. Normal.
+- Le fichier construit pèse ~391 ko dont 182 ko d'images — 24 photos et
+  3 dessins. Normal. Les photos sortent en JPEG plutôt qu'en PNG pour
+  cette raison ; c'est aussi pour ça qu'elles sont lissées avant
+  l'encodage. Ne pas gonfler `COTE` sans regarder ce que ça coûte : les
+  aperçus s'affichent à 54 px dans un blason et à ~300 px en fond de tuile.
