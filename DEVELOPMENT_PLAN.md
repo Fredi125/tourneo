@@ -203,7 +203,10 @@ points est un projet, pas une amélioration.
   sera joué en trois soirées.
 - **Des visuels officiels de jeux.** Voir `CLAUDE.md`, invariant n°2.
 - **Un abonnement, un compte, une synchronisation infonuagique.** Hors
-  sujet pour ce produit.
+  sujet pour cette application.
+- **Toute forme de transaction.** Prix, achat intégré, version « pro »,
+  publicité, don : rien de tout ça n'entrera. Voir `CLAUDE.md`,
+  invariant n°5.
 
 ---
 

@@ -9,7 +9,8 @@ déclarer derrière un participant et **hériter de ses points**. Les équipes
 se forment au fil de la soirée, avec un plafond de coéquipiers qui force
 les noyaux à se dessiner.
 
-Une page. Aucune dépendance. Aucun réseau. Rien ne quitte l'appareil.
+Une page. Aucune dépendance. Aucun réseau. Aucune transaction.
+Rien ne quitte l'appareil.
 
 ## Utiliser
 

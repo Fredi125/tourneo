@@ -124,7 +124,7 @@ un archivage laisserait la soirée versée en double.
 ## Ce qui est incertain
 
 **Les couleurs.** La charte s'inspire de GameCrawler, l'application de
-Daniel Richard, en vue d'une liaison entre les deux produits. Je n'ai pas
+Daniel Richard, en vue d'une liaison entre les deux applications. Je n'ai pas
 pu extraire les vraies valeurs : `web_fetch` rend le texte, pas la
 feuille de style, et le CSS de Next.js est derrière un nom haché. Les
 jetons actuels sont une **interprétation** de sa métaphore déclarée
@@ -155,7 +155,7 @@ une application locale mise en cache une fois. Les photos sont déjà
 lissées, ramenées à 256 px et encodées en JPEG ; le prochain levier
 serait de descendre à 224 px (−40 ko environ) avant d'envisager des
 fichiers séparés — mais ça, ça coûte l'autonomie du fichier unique, qui
-est un invariant du produit.
+est un invariant de l'application.
 
 ---
 

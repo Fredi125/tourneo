@@ -2,7 +2,7 @@
 
 Constitution du projet. À lire en entier avant toute modification.
 Les règles marquées **INVARIANT** ne se changent pas sans instruction
-explicite de Fred : elles définissent ce qu'est le produit.
+explicite de Fred : elles définissent ce qu'est l'application.
 
 ---
 
@@ -31,7 +31,7 @@ compte, pas de serveur, pas de réseau.
 
 ---
 
-## 2. Invariants du produit
+## 2. Invariants de l'application
 
 **INVARIANT — Un seul fichier.** `dist/tourneo.html` doit rester ouvrable
 en double-cliquant dessus, hors ligne, sans serveur. Zéro CDN, zéro
@@ -44,12 +44,15 @@ protégés. Ne jamais télécharger ni intégrer d'art officiel, même « juste
 pour tester ». Les aperçus de `assets/apercus/` n'ont donc que deux
 sources permises :
 
-- une **photo libre de droit** — CC0 ou domaine public, jamais une licence
-  qui exige attribution ou interdit le commercial — rangée dans
-  `assets/photos/<clé>.jpg`, sa provenance consignée dans
-  `assets/photos/SOURCES.md`. Elle montre un **sujet générique** : un kart
-  pour Mario Kart, une cible pour les dards, un échiquier pour les échecs.
-  Jamais une capture, une boîte, un personnage ;
+- une **photo libre de droit** — CC0 ou domaine public, rien d'autre :
+  ces deux-là n'imposent aucune condition à qui reçoit le fichier, alors
+  qu'une CC-BY réclame un crédit qu'un fichier unique porte mal. Gare au
+  faux ami : sur un site de photos, « libre de droit » veut souvent dire
+  « payé une fois ». La photo va dans `assets/photos/<clé>.jpg`, sa
+  provenance dans `assets/photos/SOURCES.md`. Elle montre un **sujet
+  générique** : un kart pour Mario Kart, une cible pour les dards, un
+  échiquier pour les échecs. Jamais une capture, une boîte, un
+  personnage ;
 - à défaut, une **illustration originale** composée des tracés de `ICONES`.
 
 `outils/generer-apercus.py` fabrique les deux, en bichromie aux couleurs de
@@ -66,9 +69,17 @@ le résultat détruirait le jeu. Ce verrou n'est pas paramétrable.
 
 **INVARIANT — Rien ne sort de l'appareil.** Pas de télémétrie, pas
 d'analytique, pas d'appel sortant. Fred construit sous une philosophie
-qu'il appelle *anti-enshittification* : prix unique, local d'abord,
-souveraineté des données. Toute suggestion d'abonnement, de compte ou de
-synchronisation infonuagique est hors sujet.
+qu'il appelle *anti-enshittification* : local d'abord, souveraineté des
+données. Toute suggestion d'abonnement, de compte ou de synchronisation
+infonuagique est hors sujet.
+
+**INVARIANT — Aucune transaction, jamais.** Tourneo ne se vend pas, ne
+se loue pas et ne rapporte rien à personne. Pas de prix, pas d'achat
+intégré, pas de version « pro », pas de publicité, pas de don, pas de
+mécénat. C'est une application de salon qu'on ouvre entre amis, et elle
+le reste. Toute proposition qui suppose de l'argent quelque part est à
+écarter sans discussion — y compris les formulations douces du genre
+« payez ce que vous voulez ».
 
 **INVARIANT — L'annulation.** Toute action qui modifie l'état doit rester
 annulable. Le mécanisme photographie l'état avant chaque geste et compare
@@ -141,7 +152,7 @@ jeu et les cercles d'équipe restent, ils ne divulguent aucun total.
 
 Inspirée de [GameCrawler](https://gamecrawler.app), l'application de
 Daniel Richard, partenaire de développement de Fred, en vue d'une
-éventuelle liaison entre les deux produits. Direction : *« a shared
+éventuelle liaison entre les deux applications. Direction : *« a shared
 bonfire »* — braise chaude sur nuit profonde.
 
 **INVARIANT — Un seul bloc de couleurs.** Tout part du bloc `:root` en
