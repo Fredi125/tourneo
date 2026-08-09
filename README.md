@@ -23,7 +23,7 @@ le reste.
 
 ```bash
 python3 outils/build.py     # src/ → dist/tourneo.html
-node tests/moteur.mjs       # 73 vérifications de régression
+node tests/moteur.mjs       # 79 vérifications de régression
 ```
 
 Python 3 et Node suffisent. `cairosvg` et `Pillow` ne sont nécessaires

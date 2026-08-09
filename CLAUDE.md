@@ -201,7 +201,12 @@ verre dans l'autre. Toute nouvelle commande respecte ça.
   après quelques soirées.
 - **Migrations.** `normaliserEpreuve()` doit rester capable de lire les
   formats précédents. Elle convertit déjà `rangs` (avant les manches) en
-  `manches[0].rangs`. Toute évolution du modèle passe par là.
+  `manches[0].rangs`. Elle reconnaît aussi un jeu à son nom quand il n'a
+  que la manette générique — `familleDuNom()` et sa table `SYNONYMES`
+  rendent sa cible à « Fléchettes ». Le drapeau `blasonManuel`, posé dès
+  que Fred choisit un pictogramme ou une teinte, coupe cette
+  reconnaissance : un choix à la main ne se fait jamais écraser au
+  chargement. Toute évolution du modèle passe par là.
 - **Commentaires** : en français, sur le *pourquoi*, pas le *quoi*.
 - Français dans le code comme dans l'interface. Ne pas angliciser les
   identifiants existants.
@@ -212,7 +217,7 @@ verre dans l'autre. Toute nouvelle commande respecte ça.
 
 ```bash
 python3 outils/build.py          # sources → dist/tourneo.html
-node tests/moteur.mjs            # 73 vérifications, sortie non nulle si échec
+node tests/moteur.mjs            # 79 vérifications, sortie non nulle si échec
 python3 outils/generer-apercus.py  # régénère les 27 aperçus (cairosvg + Pillow)
 ```
 

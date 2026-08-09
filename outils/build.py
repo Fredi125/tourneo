@@ -74,7 +74,10 @@ def main():
     if egarees:
         sys.exit("Couleurs codées en dur hors du bloc de jetons : " + ", ".join(sorted(egarees)))
 
-    (DIST / "tourneo.html").write_text(html, encoding="utf-8")
+    # newline="\n" : sans ça, Python écrit en CRLF sous Windows. Le fichier
+    # unique est versionné ; il doit sortir identique au bit près, quelle que
+    # soit la machine qui le construit.
+    (DIST / "tourneo.html").write_text(html, encoding="utf-8", newline="\n")
     for f in PUBLIC.glob("*"):
         (DIST / f.name).write_bytes(f.read_bytes())
 

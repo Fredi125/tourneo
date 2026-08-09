@@ -92,7 +92,8 @@ function traiterClic(a, b){
       c2 = document.getElementById("jeu-" + e.id);
       if (c2) c2.scrollIntoView({ behavior:"smooth", block:"start" });
       return;
-    case "ep-icone": e.icone = b.getAttribute("data-i"); e.image = ""; break;
+    // blasonManuel : à partir d'ici, la reconnaissance par le nom se tait.
+    case "ep-icone": e.icone = b.getAttribute("data-i"); e.image = ""; e.blasonManuel = true; break;
     case "ep-image-choisir":
       c2 = document.getElementById("img-" + e.id);
       if (c2) c2.click();
@@ -287,7 +288,7 @@ function traiterChangement(a, el){
 
   switch(a){
     case "ep-image": importerImage(el, e); return;
-    case "ep-teinte": e.teinte = el.value; e.image = ""; break;
+    case "ep-teinte": e.teinte = el.value; e.image = ""; e.blasonManuel = true; break;
     case "joueur-nom":
       j = trouverJoueur(el.getAttribute("data-j"));
       if (j) j.nom = el.value.trim() || j.nom;

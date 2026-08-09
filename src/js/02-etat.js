@@ -125,10 +125,18 @@ function sauvegarder(){
 function normaliserEpreuve(ep){
   var x = Object.assign({
     id:id(), nom:"Épreuve", poids:1, mode:"auto", baremeManuel:[],
-    icone:"manette", teinte:"#84B4EA", image:"",
+    icone:"manette", teinte:"#84B4EA", image:"", blasonManuel:false,
     statut:"a_venir", participants:[], affiliations:{}, paris:{},
     manches:[], cumul:"somme", debutA:0, finA:0, rangFin:0
   }, ep || {});
+  // Un jeu tapé à la main, ou repris d'un fichier d'avant les pictogrammes,
+  // n'a que la manette générique. On le reconnaît alors à son nom : le
+  // catalogue sait à quoi ressemble « Fléchettes ». Un blason choisi à la
+  // main, lui, n'est jamais écrasé.
+  if (!x.blasonManuel && (!ep || !ep.icone || ep.icone === "manette")){
+    var famille = familleDuNom(x.nom);
+    if (famille){ x.icone = famille.icone; x.teinte = famille.teinte; }
+  }
   // Reprise des fichiers d'avant les manches multiples.
   if ((!x.manches || !x.manches.length)){
     x.manches = [{ id:id(), rangs: (ep && ep.rangs) ? ep.rangs : {} }];

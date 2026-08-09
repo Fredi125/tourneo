@@ -37,6 +37,48 @@ function apercuDe(x){
   return x.image || APERCUS[x.icone] || "";
 }
 
+/* Reconnaître un jeu à son nom. Un jeu tapé à la main, ou repris d'un
+   fichier d'avant les pictogrammes, arrive sans blason. Plutôt que la
+   manette générique, on regarde s'il est au catalogue sous un autre nom :
+   « Fléchettes » retrouve la cible des dards, « FIFA » son ballon. */
+var SYNONYMES = {
+  "flechettes":"Dards", "darts":"Dards",
+  "babyfoot":"Baby-foot", "kicker":"Baby-foot", "soccer sur table":"Baby-foot",
+  "tennis de table":"Ping-pong", "pong":"Ping-pong",
+  "echec":"Échecs", "chess":"Échecs",
+  "pool":"Billard", "8-ball":"Billard", "snooker":"Billard",
+  "poches":"Jeu de poches", "sacs de sable":"Jeu de poches", "cornhole":"Jeu de poches",
+  "fifa":"EA Sports FC", "soccer":"EA Sports FC", "football":"EA Sports FC",
+  "smash":"Super Smash Bros.", "smash bros":"Super Smash Bros.",
+  "age of empires":"Age of Empires II", "aoe":"Age of Empires II",
+  "warcraft":"Warcraft III", "starcraft II":"StarCraft",
+  "colons de catane":"Catan", "catane":"Catan",
+  "blind test":"Quiz musical", "quiz":"Quiz musical",
+  "karaoke":"Karaoké", "dance":"Just Dance",
+  "tetris 99":"Tetris", "mario kart 8":"Mario Kart", "rocket":"Rocket League"
+};
+
+// Comparaison indulgente : sans accents, sans ponctuation, sans espaces.
+function cleNom(s){
+  return String(s || "").toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+}
+
+var INDEX_NOMS = null;
+function familleDuNom(nom){
+  if (!INDEX_NOMS){
+    INDEX_NOMS = {};
+    PRESETS.forEach(function(f){
+      f.jeux.forEach(function(g){ INDEX_NOMS[cleNom(g.nom)] = { icone:g.icone, teinte:f.teinte }; });
+    });
+    Object.keys(SYNONYMES).forEach(function(k){
+      var cible = INDEX_NOMS[cleNom(SYNONYMES[k])];
+      if (cible) INDEX_NOMS[cleNom(k)] = cible;
+    });
+  }
+  return INDEX_NOMS[cleNom(nom)] || null;
+}
+
 function svgIcone(cle, taille){
   var d = ICONES[cle] || ICONES.manette;
   return '<svg viewBox="0 0 24 24" width="'+taille+'" height="'+taille+'" fill="none" stroke="currentColor" '+

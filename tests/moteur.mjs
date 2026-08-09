@@ -20,7 +20,13 @@ if (!fs.existsSync(HTML)) {
   process.exit(1);
 }
 const html = fs.readFileSync(HTML, "utf8");
-const source = html.match(/<script>\n([\s\S]*?)\n<\/script>/)[1];
+// \r?\n : un dépôt cloné sous Windows peut arriver en fins de ligne CRLF.
+const bloc = html.match(/<script>\r?\n([\s\S]*?)\r?\n<\/script>/);
+if (!bloc) {
+  console.error("Aucun bloc <script> dans dist/tourneo.html — reconstruisez : python3 outils/build.py");
+  process.exit(1);
+}
+const source = bloc[1];
 
 /* ── DOM minimal : assez pour que le module se charge sans navigateur ── */
 const faux = {
@@ -307,6 +313,16 @@ groupe("Illustrations");
   egal("l'image personnalisée l'emporte", A.apercuDe(x), "data:image/jpeg;base64,PERSO");
   x.image = ""; x.icone = "inconnu";
   verifie("repli sur le pictogramme SVG", A.apercuDe(x) === "" && /<svg/.test(A.blason(x, 30)));
+
+  // Reconnaissance par le nom : jeu tapé à la main ou fichier d'avant les
+  // pictogrammes, il ne doit pas rester une manette générique.
+  egal("un jeu du catalogue tapé à la main", A.normaliserEpreuve({ nom: "Mario Kart" }).icone, "kart");
+  egal("un synonyme aussi", A.normaliserEpreuve({ nom: "Fléchettes" }).icone, "cible");
+  egal("la teinte suit la famille", A.normaliserEpreuve({ nom: "Fléchettes" }).teinte, "#86C39B");
+  egal("un ancien fichier resté en manette", A.normaliserEpreuve({ nom: "Catan", icone: "manette" }).icone, "hexagone");
+  egal("un pictogramme choisi à la main est intouchable",
+    A.normaliserEpreuve({ nom: "Catan", icone: "manette", blasonManuel: true }).icone, "manette");
+  egal("un jeu inconnu garde la manette", A.normaliserEpreuve({ nom: "Pétanque géante" }).icone, "manette");
 }
 
 /* ── 10. Rendu ──────────────────────────────────────────────────────── */
@@ -333,7 +349,7 @@ groupe("Rendu de toutes les vues");
 /* ── 11. Charte visuelle ────────────────────────────────────────────── */
 groupe("Charte visuelle");
 {
-  const css = html.match(/<style>\n([\s\S]*?)\n<\/style>/)[1];
+  const css = (html.match(/<style>\r?\n([\s\S]*?)\r?\n<\/style>/) || ["", ""])[1];
   const bloc = css.slice(css.indexOf(":root{"), css.indexOf("/* Noms internes"));
   const egarees = [...new Set(css.replace(bloc, "").match(/#[0-9A-Fa-f]{6}/g) || [])];
   egal("aucune couleur hors du bloc de jetons", egarees, []);
