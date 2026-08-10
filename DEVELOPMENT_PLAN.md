@@ -90,7 +90,7 @@ Détails dans `HANDOFF.md`, section « Ce qui est incertain ».
 
 **À faire.** Remplacer le bloc `:root` de `src/styles.css`. Si les noms
 diffèrent, renommer dans tout le dépôt — c'est mécanique, la couche de
-correspondance est déjà isolée. Régénérer les 27 aperçus, qui lisent les
+correspondance est déjà isolée. Régénérer les 29 aperçus, qui lisent les
 mêmes jetons — la bichromie des photos en dépend autant que les dessins. Ajuster `public/manifest.webmanifest`.
 
 **Vérifier.** Le test `Charte visuelle` doit rester vert, et les
@@ -199,7 +199,7 @@ points est un projet, pas une amélioration.
 
 - **Un framework.** Le rendu complet suffit largement à douze joueurs et
   le projet n'a aucune dépendance. C'est un atout, pas une dette.
-- **Plus de jeux au catalogue.** Vingt-quatre, c'est déjà plus que ce qui
+- **Plus de jeux au catalogue.** Vingt-six, c'est déjà plus que ce qui
   sera joué en trois soirées.
 - **Des visuels officiels de jeux.** Voir `CLAUDE.md`, invariant n°2.
 - **Un abonnement, un compte, une synchronisation infonuagique.** Hors

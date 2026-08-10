@@ -28,7 +28,7 @@ Ce qui existe :
 | Récapitulatif PNG partageable | complet |
 | Affichage TV, 5 panneaux en rotation, fenêtre miroir | complet |
 | Chronomètre par jeu | complet, désactivé par défaut |
-| 24 préréglages, chacun sa photo libre de droit | complet |
+| 26 préréglages, chacun sa photo libre de droit | complet |
 | 3 pictogrammes restants en illustration originale | complet |
 | Charte visuelle inspirée de GameCrawler | complet, valeurs à confirmer |
 
@@ -149,8 +149,8 @@ synchronise par l'événement `storage`, qui exige la même origine. En
 `file://` les navigateurs sont inégaux. En HTTPS depuis le VPS, ça marche.
 À tester en vrai avant de compter dessus le soir de la soirée.
 
-**Le poids du fichier.** 391 ko dont 182 ko d'images, depuis que les
-24 jeux préréglés ont chacun leur photo libre de droit. Acceptable pour
+**Le poids du fichier.** 414 ko dont 198 ko d'images, depuis que les
+26 jeux préréglés ont chacun leur photo libre de droit. Acceptable pour
 une application locale mise en cache une fois. Les photos sont déjà
 lissées, ramenées à 256 px et encodées en JPEG ; le prochain levier
 serait de descendre à 224 px (−40 ko environ) avant d'envisager des

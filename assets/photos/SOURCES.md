@@ -29,6 +29,7 @@ son illustration dessinée.
 | Mario Party | `de` | deux dés | CC0 | Skitter Photo | [stocksnap](https://stocksnap.io/photo/dice-game-IMUB39JBN1) |
 | Crokinole | `disque` | un plateau de crokinole | CC0 | Fgingras47 | [wikimedia](https://commons.wikimedia.org/wiki/File:Vintage_Crokinole.jpg) |
 | Soul Calibur | `epees` | garde ouvragée d'une rapière | CC0 | Bouqueton et Johannes Wundes, coll. Metropolitan Museum | [wikimedia](https://commons.wikimedia.org/wiki/File:Rapier_MET_173997.jpg) |
+| Mario Golf | `golf` | un bois et une balle sur le tee | CC0 | Kristin Hardwick | [stocksnap](https://stocksnap.io/photo/golf-sport-URP68SJP6K) |
 | Warcraft III | `hache` | une hache plantée | CC0 | Tyler Lastovich | [stocksnap](https://stocksnap.io/photo/axe-tree-U9YAX8SKEF) |
 | Catan | `hexagone` | un carrelage hexagonal | CC0 | themet | [rawpixel](https://www.rawpixel.com/image/8313812/star-and-hexagonal-tile-panel) |
 | Super Smash Bros. | `impact` | manche et boutons d'une borne d'arcade | CC0 | Nilo Velez | [wordpress](https://wordpress.org/photos/photo/86567ab106/) |
@@ -41,6 +42,7 @@ son illustration dessinée.
 | Tekken | `poing` | gants de boxe | CC0 | — | [rawpixel](https://www.rawpixel.com/image/5905623/photo-image-public-domain-blue-red) |
 | Trivial Pursuit | `question` | un point d'interrogation peint | CC0 | takomabibelot | [flickr](https://www.flickr.com/photos/38782010@N00/4373062612) |
 | Ping-pong | `raquette` | deux raquettes et une balle | CC0 | — | [rawpixel](https://www.rawpixel.com/image/5914671/image-public-domain-free-game) |
+| Mario Tennis | `tennis` | une raquette et une balle sur la terre battue | CC0 | Krzysztof Puszczyński | [stocksnap](https://stocksnap.io/photo/tennis-racket-8ODE0WIMD9) |
 | StarCraft | `vaisseau` | une nébuleuse | Domaine public | pingnews.com | [flickr](https://www.flickr.com/photos/39735679@N00/433793895) |
 
-24 photos · 1105 ko
+26 photos · 1220 ko

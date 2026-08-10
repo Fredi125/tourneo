@@ -36,9 +36,9 @@ que pour régénérer les aperçus.
 src/index.html      squelette, avec marqueurs d'injection
 src/styles.css      un seul bloc de jetons de couleur en tête
 src/js/*.js         concaténés dans l'ordre alphabétique
-assets/photos/      24 photos libres de droit, une par jeu préréglé
+assets/photos/      26 photos libres de droit, une par jeu préréglé
 assets/photos/perso/  vos visuels à vous, ignorés par git
-assets/apercus/     27 aperçus composés, embarqués au build
+assets/apercus/     29 aperçus composés, embarqués au build
 outils/build.py     assemble le fichier unique
 outils/generer-apercus.py   régénère les aperçus
 tests/moteur.mjs    suite de régression

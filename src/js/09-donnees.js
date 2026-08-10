@@ -8,6 +8,8 @@ var ICONES = {
   bolide:    '<circle cx="15" cy="12" r="5.2"/><path d="M8.2 8.4 3.6 6M8.2 12H3M8.2 15.6 3.6 18"/>',
   ballon:    '<circle cx="12" cy="12" r="8.4"/><path d="m12 7.4 3.6 2.6-1.4 4.2H9.8L8.4 10z"/><path d="M12 3.6v3.8M4.4 9.8l4 .2M19.6 9.8l-4 .2M7.4 19.6l2.4-3.4M16.6 19.6l-2.4-3.4"/>',
   raquette:  '<ellipse cx="10.4" cy="9.4" rx="5.8" ry="6.4"/><path d="m8.6 15.2-2 5.2"/><circle cx="19" cy="16.6" r="2.1"/>',
+  tennis:    '<ellipse cx="13.6" cy="8.4" rx="5" ry="5.8"/><path d="M13.6 14.2 10.8 21"/><circle cx="5.2" cy="16.4" r="2.2"/>',
+  golf:      '<path d="M9 3.2v15.2"/><path d="M9 4 17.2 7 9 10z"/><ellipse cx="12" cy="19.6" rx="7.6" ry="2.1"/><circle cx="16.4" cy="17.1" r="1.6"/>',
   impact:    '<circle cx="12" cy="12" r="3.4"/><path d="M12 2.8v3.4M12 17.8v3.4M2.8 12h3.4M17.8 12h3.4M5.5 5.5 7.9 7.9M16.1 16.1l2.4 2.4M18.5 5.5l-2.4 2.4M7.9 16.1l-2.4 2.4"/>',
   epees:     '<path d="M4.6 4 15 14.4M19.4 4 9 14.4"/><path d="m13.4 15.6 3.4 3.4 2-2-3.4-3.4M10.6 15.6 7.2 19l-2-2 3.4-3.4"/>',
   poing:     '<path d="M6.4 8.6A4.2 4.2 0 0 1 10.6 4.4h3.6a5 5 0 0 1 5 5v2.8a2.6 2.6 0 0 1-2.6 2.6H6.4z"/><path d="M6.4 14.8h9.6v2.8a2.4 2.4 0 0 1-2.4 2.4H8.8a2.4 2.4 0 0 1-2.4-2.4z"/><path d="M6.4 9.6H5A1.6 1.6 0 0 0 3.4 11.2v1.6A1.6 1.6 0 0 0 5 14.4h1.4"/>',
@@ -45,6 +47,7 @@ var SYNONYMES = {
   "flechettes":"Dards", "darts":"Dards",
   "babyfoot":"Baby-foot", "kicker":"Baby-foot", "soccer sur table":"Baby-foot",
   "tennis de table":"Ping-pong", "pong":"Ping-pong",
+  "tennis":"Mario Tennis", "golf":"Mario Golf", "mini golf":"Mario Golf",
   "echec":"Échecs", "chess":"Échecs",
   "pool":"Billard", "8-ball":"Billard", "snooker":"Billard",
   "poches":"Jeu de poches", "sacs de sable":"Jeu de poches", "cornhole":"Jeu de poches",
@@ -90,6 +93,8 @@ var PRESETS = [
     { nom:"Mario Kart",        icone:"kart",     poids:1, manches:3, note:"3 Grands Prix, ordre d'arrivée" },
     { nom:"Rocket League",     icone:"bolide",   poids:1, manches:2, note:"Score final, équipes classées" },
     { nom:"EA Sports FC",      icone:"ballon",   poids:1, manches:1, note:"Duels ou mini-tournoi" },
+    { nom:"Mario Tennis",      icone:"tennis",   poids:1, manches:2, note:"Simples ou doubles, victoires cumulées" },
+    { nom:"Mario Golf",        icone:"golf",     poids:1, manches:1, note:"Le plus bas pointage prend le premier rang" },
     { nom:"Ping-pong",         icone:"raquette", poids:1, manches:1, note:"Ronde rapide, classée aux victoires" }
   ]},
   { cat:"Combat", teinte:"#F5903C", jeux:[

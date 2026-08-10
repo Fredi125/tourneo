@@ -53,6 +53,7 @@ FG      = "#F3EEE9"
 FAMILLES = {
     "kart":("#F0705E","vitesse"), "bolide":("#F0705E","vitesse"),
     "ballon":("#F0705E","vitesse"), "raquette":("#F0705E","vitesse"),
+    "tennis":("#F0705E","vitesse"), "golf":("#F0705E","vitesse"),
     "impact":("#F5903C","rayons"), "epees":("#F5903C","rayons"), "poing":("#F5903C","rayons"),
     "chateau":("#9E8CE0","etoiles"), "vaisseau":("#9E8CE0","etoiles"),
     "hache":("#9E8CE0","etoiles"), "piece":("#9E8CE0","etoiles"),

@@ -238,7 +238,7 @@ verre dans l'autre. Toute nouvelle commande respecte ça.
 ```bash
 python3 outils/build.py          # sources → dist/tourneo.html
 node tests/moteur.mjs            # 79 vérifications, sortie non nulle si échec
-python3 outils/generer-apercus.py  # régénère les 27 aperçus (cairosvg + Pillow)
+python3 outils/generer-apercus.py  # régénère les 29 aperçus (cairosvg + Pillow)
 ```
 
 **Boucle obligatoire : modifier `src/` → build → tests.** Ne jamais
@@ -275,7 +275,7 @@ n'a de toute façon pas besoin.
 - **La ligue cumule par nom**, seul identifiant stable entre deux
   soirées. Une faute de frappe crée un joueur fantôme. Documenté dans
   l'interface, à ne pas « corriger » par des identifiants.
-- Le fichier construit pèse ~391 ko dont 182 ko d'images — 24 photos et
+- Le fichier construit pèse ~414 ko dont 198 ko d'images — 26 photos et
   3 dessins. Normal. Les photos sortent en JPEG plutôt qu'en PNG pour
   cette raison ; c'est aussi pour ça qu'elles sont lissées avant
   l'encodage. Ne pas gonfler `COTE` sans regarder ce que ça coûte : les
