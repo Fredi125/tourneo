@@ -21,6 +21,10 @@ PUBLIC = RACINE / "public"
 
 TYPES = {".png": "image/png", ".jpg": "image/jpeg"}
 
+# Rempli au passage : sert à prévenir avant de recopier le fichier construit
+# par-dessus la version que le dépôt distribue.
+PERSO_UTILISES = []
+
 
 def banque_apercus():
     """Encode les aperçus en une seule déclaration JS."""
@@ -37,6 +41,7 @@ def banque_apercus():
     # versionné : il vit dans un sous-dossier ignoré par git.
     maison = {f.stem: f for f in sorted(APERCUS_PERSO.glob("*.jpg"))} if APERCUS_PERSO.is_dir() else {}
     fichiers = [maison.pop(f.stem, f) for f in fichiers]
+    PERSO_UTILISES.extend(sorted(set(f.stem for f in fichiers if f.parent == APERCUS_PERSO)))
     if maison:
         print("  aperçus personnels sans clé connue, ignorés : " + ", ".join(sorted(maison)))
     lignes = []
@@ -91,6 +96,11 @@ def main():
     ko = len(html.encode()) / 1024
     print(f"dist/tourneo.html — {ko:.0f} ko, {html.count(chr(10))+1} lignes, 0 dépendance")
     print("dist/manifest.webmanifest, dist/sw.js")
+    if PERSO_UTILISES:
+        print("\nCe fichier contient " + str(len(PERSO_UTILISES)) + " visuel(s) personnel(s) : "
+              + ", ".join(PERSO_UTILISES) + ".")
+        print("Il est pour vous. Ne le recopiez pas sur tourneo.html à la racine,")
+        print("qui est versionné et ne doit porter que des visuels libres de droit.")
 
 
 if __name__ == "__main__":
