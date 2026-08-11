@@ -91,7 +91,7 @@ function vueTournoi(){
     }
     t += '</div></button><button class="reglage-jeu" data-act="ouvrir-epreuve" data-ep="'+x.id+'" '+
          'aria-label="Réglages de '+esc(x.nom)+'">&#9881;</button>';
-    return '<div style="position:relative">'+t+'</div>';
+    return '<div class="case-jeu">'+t+'</div>';
   }).join("") +
   '<button class="tuile-jeu tuile-ajout" data-act="ouvrir-preset">'+
     '<span class="plus">+</span><span style="font-size:.84rem;font-weight:650">Ajouter un jeu</span></button></div>';

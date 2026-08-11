@@ -290,7 +290,13 @@ table.matrice td.tot{color:var(--laiton);font-weight:700}
 .avis.grave{border-color:var(--alerte);background:var(--tint-danger)}
 
 /* galerie de jeux */
-.grille-jeux{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;margin-bottom:12px}
+/* grid-auto-rows:1fr — toutes les tuiles font la même hauteur, qu'un podium
+   soit rempli ou non. Sans ça, un jeu terminé pousse trois lignes et grandit
+   à côté d'un jeu à venir, et la grille se met à zigzaguer en cours de
+   soirée. La case s'étire, la tuile la remplit. */
+.grille-jeux{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  grid-auto-rows:1fr;gap:11px;margin-bottom:12px}
+.case-jeu{position:relative;display:flex}
 .tuile-jeu{background:var(--surface);border:1px solid var(--ligne-douce);border-radius:16px;padding:14px 13px 12px;
   text-align:left;width:100%;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px;
   min-height:150px;transition:border-color .14s ease,transform .1s ease}
@@ -1509,7 +1515,7 @@ function vueTournoi(){
     }
     t += '</div></button><button class="reglage-jeu" data-act="ouvrir-epreuve" data-ep="'+x.id+'" '+
          'aria-label="Réglages de '+esc(x.nom)+'">&#9881;</button>';
-    return '<div style="position:relative">'+t+'</div>';
+    return '<div class="case-jeu">'+t+'</div>';
   }).join("") +
   '<button class="tuile-jeu tuile-ajout" data-act="ouvrir-preset">'+
     '<span class="plus">+</span><span style="font-size:.84rem;font-weight:650">Ajouter un jeu</span></button></div>';
