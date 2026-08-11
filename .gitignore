@@ -8,3 +8,4 @@ node_modules/
 # Le mode d'emploi, lui, est versionné.
 assets/photos/perso/*
 !assets/photos/perso/LISEZMOI.md
+assets/apercus/perso/

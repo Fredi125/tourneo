@@ -15,12 +15,21 @@ n'est utilisé : ni jaquette, ni logo, ni personnage. Les photos montrent la
 famille de jeu — un kart, une cible, un échiquier — jamais une marque.
 """
 import re, io, base64, math, random, pathlib
-import cairosvg
 from PIL import Image, ImageFilter, ImageOps, ImageStat
+
+# cairosvg réclame la bibliothèque native Cairo, absente d'une installation
+# Python nue sous Windows. Elle ne sert qu'aux aperçus dessinés ; les visuels
+# personnels se composent avec Pillow seul. Sans elle, on ne refabrique donc
+# pas les 29 aperçus versionnés — ils sont déjà là, et ils sont justes.
+try:
+    import cairosvg
+except Exception:
+    cairosvg = None
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 SRC = RACINE / "src" / "js" / "09-donnees.js"
 SORTIE = RACINE / "assets" / "apercus"
+SORTIE_PERSO = SORTIE / "perso"
 PHOTOS = RACINE / "assets" / "photos"
 PERSO = PHOTOS / "perso"
 COTE = 256
@@ -139,6 +148,19 @@ def photo_teintee(cle, teinte):
                              white=melange(FG, teinte, 0.62))
 
 
+def composer_perso(im, teinte):
+    """Aperçu d'un visuel personnel, sans SVG : Pillow suffit.
+
+    Pas de bichromie, pas de pictogramme — juste de quoi garder le nom du
+    jeu lisible dans la tuile, et le liseré de la famille en bas.
+    """
+    bande = Image.new("L", (1, 320))
+    bande.putdata([round(255 * 0.55 * max(0.0, (y / 319 - 0.55) / 0.45)) for y in range(320)])
+    im = Image.composite(Image.new("RGB", (320, 320), BG), im, bande.resize((320, 320)))
+    im.paste(Image.blend(im.crop((0, 316, 320, 320)), Image.new("RGB", (320, 4), teinte), 0.5), (0, 316))
+    return im
+
+
 def en_donnees(im):
     """PNG encodé pour être posé tel quel dans le SVG."""
     tampon = io.BytesIO()
@@ -193,18 +215,9 @@ def svg_apercu(cle, tracé):
     teinte, genre = FAMILLES.get(cle, ("#F5903C", "grille"))
     haut = melange(BG, teinte, 0.17)
     motif = melange(FG, teinte, 0.30)
-    perso = photo_perso(cle)
-    photo = None if perso is not None else photo_teintee(cle, teinte)
+    photo = photo_teintee(cle, teinte)
 
-    if perso is not None:
-        # Aucune bichromie, aucun pictogramme : l'image choisie parle d'
-        # elle-même. Juste de quoi garder le nom du jeu lisible par-dessus,
-        # et le liseré de la famille en bas.
-        fond = (f'<image x="0" y="0" width="320" height="320" xlink:href="{en_donnees(perso)}"/>\n'
-                f'<rect width="320" height="320" fill="url(#lisibilite)"/>')
-        couronne = ""
-        pose, ampleur, ombre, tracé = 95, 5.4, "", ""
-    elif photo is None:
+    if photo is None:
         fond = (f'<rect width="320" height="320" fill="url(#fond)"/>\n'
                 f'<rect width="320" height="320" fill="url(#lueur)"/>\n'
                 f'{decor(genre, teinte, sum(map(ord, cle)))}')
@@ -264,11 +277,6 @@ def svg_apercu(cle, tracé):
     <stop offset="0.55" stop-color="{teinte}" stop-opacity="0.09"/>
     <stop offset="1.00" stop-color="{teinte}" stop-opacity="0.02"/>
   </radialGradient>
-  <linearGradient id="lisibilite" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0.00" stop-color="{BG}" stop-opacity="0"/>
-    <stop offset="0.55" stop-color="{BG}" stop-opacity="0"/>
-    <stop offset="1.00" stop-color="{BG}" stop-opacity="0.55"/>
-  </linearGradient>
   <radialGradient id="bordure" cx="0.5" cy="0.46" r="0.82">
     <stop offset="0.55" stop-color="{BG}" stop-opacity="0"/>
     <stop offset="0.80" stop-color="{BG}" stop-opacity="0.16"/>
@@ -293,6 +301,13 @@ def svg_apercu(cle, tracé):
 </svg>'''
 
 
+def en_jpeg(im):
+    out = io.BytesIO()
+    im.resize((COTE, COTE), Image.LANCZOS).save(
+        out, "JPEG", quality=QUALITE_JPEG, optimize=True, progressive=True, subsampling=2)
+    return out.getvalue()
+
+
 def encoder(svg, photo):
     """Rend le SVG puis l'encode au format le plus léger pour son contenu."""
     brut = cairosvg.svg2png(bytestring=svg.encode(), output_width=COTE, output_height=COTE)
@@ -315,12 +330,30 @@ if __name__ == "__main__":
         raise SystemExit("Tracés introuvables : " + ", ".join(manquants))
 
     SORTIE.mkdir(parents=True, exist_ok=True)
-    total, avec_photo, perso = 0, 0, 0
+    total, avec_photo, perso, conserves = 0, 0, 0, 0
     for cle in sorted(FAMILLES):
-        maison = photo_perso(cle) is not None
-        photo = maison or (PHOTOS / (cle + ".jpg")).exists()
-        avec_photo += photo and not maison
-        perso += maison
+        maison = photo_perso(cle)
+        if maison is not None:
+            # Sortie séparée et ignorée par git : un visuel personnel ne doit
+            # jamais écraser l'aperçu libre de droit que le dépôt distribue.
+            SORTIE_PERSO.mkdir(parents=True, exist_ok=True)
+            data = en_jpeg(composer_perso(maison, FAMILLES.get(cle, ("#F5903C", ""))[0]))
+            (SORTIE_PERSO / (cle + ".jpg")).write_bytes(data)
+            perso += 1
+            print(f"  {cle:<10} {len(data)/1024:6.1f} ko  perso")
+            continue
+
+        # Le visuel personnel a été retiré : son aperçu ne doit pas survivre.
+        ancien = SORTIE_PERSO / (cle + ".jpg")
+        if ancien.exists():
+            ancien.unlink()
+            print(f"  {cle:<10} visuel personnel retiré, retour à la photo libre")
+
+        photo = (PHOTOS / (cle + ".jpg")).exists()
+        if cairosvg is None:
+            conserves += 1
+            continue
+        avec_photo += photo
         ext, data = encoder(svg_apercu(cle, icones[cle]), photo)
         (SORTIE / (cle + ext)).write_bytes(data)
         # Une clé n'a qu'un aperçu : si elle passe du dessin à la photo, la
@@ -329,9 +362,15 @@ if __name__ == "__main__":
         if autre.exists():
             autre.unlink()
         total += len(data)
-        print(f"  {cle:<10} {len(data)/1024:6.1f} ko  "
-              f"{'perso' if maison else 'photo' if photo else 'dessin'}")
-    print(f"\n{len(FAMILLES)} aperçus dans assets/apercus/ · {total/1024:.0f} ko "
-          f"· {avec_photo} sur photo libre de droit"
-          + (f" · {perso} sur visuel personnel, à ne pas verser dans git" if perso else ""))
+        print(f"  {cle:<10} {len(data)/1024:6.1f} ko  {'photo' if photo else 'dessin'}")
+
+    if conserves:
+        print(f"\ncairosvg indisponible : les {conserves} aperçus versionnés sont laissés "
+              "tels quels.\nIls sont déjà justes — rien à refaire tant que photos et "
+              "pictogrammes ne bougent pas.")
+    else:
+        print(f"\n{len(FAMILLES) - perso} aperçus dans assets/apercus/ · {total/1024:.0f} ko "
+              f"· {avec_photo} sur photo libre de droit")
+    if perso:
+        print(f"{perso} visuel(s) personnel(s) dans assets/apercus/perso/ — ignorés par git.")
     print("Lancez outils/build.py pour les embarquer dans dist/tourneo.html")

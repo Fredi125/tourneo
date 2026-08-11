@@ -15,6 +15,7 @@ import base64, pathlib, re, sys
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 SRC, DIST = RACINE / "src", RACINE / "dist"
 APERCUS = RACINE / "assets" / "apercus"
+APERCUS_PERSO = APERCUS / "perso"
 PUBLIC = RACINE / "public"
 
 
@@ -32,6 +33,12 @@ def banque_apercus():
     doubles = sorted({f.stem for f in fichiers if f.stem in vus or vus.add(f.stem)})
     if doubles:
         sys.exit("Deux aperçus pour la même clé : " + ", ".join(doubles))
+    # Le visuel personnel l'emporte, sans jamais remplacer le fichier
+    # versionné : il vit dans un sous-dossier ignoré par git.
+    maison = {f.stem: f for f in sorted(APERCUS_PERSO.glob("*.jpg"))} if APERCUS_PERSO.is_dir() else {}
+    fichiers = [maison.pop(f.stem, f) for f in fichiers]
+    if maison:
+        print("  aperçus personnels sans clé connue, ignorés : " + ", ".join(sorted(maison)))
     lignes = []
     for f in fichiers:
         b64 = base64.b64encode(f.read_bytes()).decode()

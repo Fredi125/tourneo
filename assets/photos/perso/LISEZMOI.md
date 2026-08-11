@@ -22,6 +22,12 @@ python3 outils/build.py
 
 Formats acceptés : `.jpg`, `.jpeg`, `.png`, `.webp`.
 
+**Une seule dépendance : `python -m pip install pillow`.** Un visuel
+personnel se compose sans SVG, donc sans `cairosvg` — la bibliothèque
+native Cairo qu'il réclame n'est pas fournie avec Python sous Windows.
+Sans elle, le générateur laisse les 29 aperçus versionnés tels quels,
+ce qui est exactement ce qu'on veut : ils sont déjà justes.
+
 ```
 assets/photos/perso/kart.jpg        → Mario Kart
 assets/photos/perso/impact.png      → Super Smash Bros.
@@ -42,8 +48,13 @@ et assombrie de l'image. Un dégradé discret assombrit le bas pour que le
 nom du jeu reste lisible dans la tuile, et le liseré de la famille reste
 en place.
 
-Retirez le fichier, relancez le script : le jeu retrouve sa photo libre de
-droit. Rien n'est perdu.
+L'aperçu fabriqué ne remplace pas celui du dépôt : il est écrit à part,
+dans `assets/apercus/perso/`, lui aussi ignoré par git. `outils/build.py`
+le préfère au moment d'assembler le fichier unique. Les 29 aperçus libres
+de droit restent intacts, et `git status` reste propre.
+
+Retirez le fichier, relancez le script : son aperçu personnel est effacé
+et le jeu retrouve sa photo libre de droit. Rien n'est perdu.
 
 ## Sans toucher aux fichiers
 

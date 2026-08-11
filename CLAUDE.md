@@ -66,9 +66,13 @@ partage, donc il ne porte rien qui ne soit pas libre. Le `tourneo.html`
 que Fred fabrique chez lui, personne ne le distribue : ce qu'il y met ne
 regarde que lui. `assets/photos/perso/` est là pour ça — ignoré par git,
 prioritaire sur la photo libre de droit, posé tel quel sans bichromie ni
-pictogramme. Mode d'emploi dans son `LISEZMOI.md`. Ne jamais verser le
-contenu de ce dossier dans git, ni le contourner en écrivant dans
-`assets/photos/`.
+pictogramme. Son aperçu sort dans `assets/apercus/perso/`, ignoré lui
+aussi : **un visuel personnel n'écrase jamais un fichier versionné**, et
+`build.py` le préfère au moment d'assembler. Il se compose avec Pillow
+seul, sans cairosvg, pour qu'une installation Python nue suffise. Mode
+d'emploi dans `assets/photos/perso/LISEZMOI.md`. Ne jamais verser le
+contenu de ces deux dossiers dans git, ni les contourner en écrivant dans
+`assets/photos/` ou `assets/apercus/`.
 
 **INVARIANT — Les affiliations se déclarent avant la partie.** Le cycle
 d'un jeu est `a_venir → declarations → en_jeu → terminee`. Les
